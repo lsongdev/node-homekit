@@ -1,69 +1,71 @@
-HAP-NodeJS
-==========
+## homekit ![homekit](https://img.shields.io/npm/v/homekit.svg)
 
-[![NPM version](https://badge.fury.io/js/hap-nodejs.svg)](http://badge.fury.io/js/hap-nodejs)
+> A HomeKit Accessory implementation in Node.js
 
-HAP-NodeJS is a Node.js implementation of HomeKit Accessory Server.
+### Installation
 
-With this project, you should be able to create your own HomeKit Accessory on Raspberry Pi, Intel Edison or any other platform that can run Node.js :)
-
-The implementation may not 100% follow the HAP MFi Specification since MFi program doesn't allow individual developer to join. 
-
-Remember to run `npm install` before actually running the server.
-
-Users can define their own accessories in: accessories/*name*_accessory.js files, where name is a short description of the accessory. All defined accessories get loaded on server start. You can define accessories using an object literal notation (see [Fan_accessory.js](accessories/Fan_accessory.js) for an example) or you can use the API (see below).
-
-You can use the following command to start the HAP Server in Bridged mode:
-
-```sh
-node BridgedCore.js
+```bash
+$ npm i homekit
 ```
 
-Or if you wish to host each Accessory as an independent HomeKit device:
+### Example
 
-```sh
-node Core.js
+```js
+const HomeKit = require('homekit');
+
+const uuid  = HomeKit.uuid.generate("homekit:yeelight");
+const acce = new HomeKit.Accessory('Simple Light', uuid);
+
+acce.on('identify', function(paired, callback) {
+  console.log("Identify!");
+  callback(); // success
+});
+
+acce
+.addService(Service.Lightbulb, 'Yeelight')
+.getCharacteristic(Characteristic.On)
+.on('set', function(value, callback) {
+  light.set_power(value, callback);
+})
+
+// Publish the Accessory on the local network.
+acce.publish({
+  port    : 51826,
+  username: "CC:22:3D:E3:CE:F6",
+  pincode : "031-45-154"
+});
 ```
 
-The HAP-NodeJS library uses the [debug](https://github.com/visionmedia/debug) library for log output. You can print some or all logs by setting the `DEBUG` environment variable. For instance, to see all debug logs while running the server:
+### Contributing
+- Fork this Repo first
+- Clone your Repo
+- Install dependencies by `$ npm install`
+- Checkout a feature branch
+- Feel free to add your features
+- Make sure your features are fully tested
+- Publish your local branch, Open a pull request
+- Enjoy hacking <3
 
-```sh
-DEBUG=* node BridgedCore.js
-```
+### MIT
 
-API
-===
+Copyright (c) 2016 Lsong &lt;song940@gmail.com&gt;
 
-HAP-NodeJS provides a set of classes you can use to construct Accessories programatically. For an example implementation, see [Lock_accessory.js](accessories/Lock_accessory.js).
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-The key classes intended for use by API consumers are:
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
-  * [Accessory](lib/Accessory.js): Represents a HomeKit device that can be published on your local network.
-  * [Bridge](lib/Bridge.js): A kind of Accessory that can host other Accessories "behind" it while only publishing a single device.
-  * [Service](lib/Service.js): Represents a set of grouped values necessary to provide a logical function. Most of the time, when you think of a supported HomeKit device like "Thermostat" or "Door Lock", you're actualy thinking of a Service. Accessories can expose multiple services.
-  * [Characteristic](lib/Characteristic.js): Represents a particular typed variable assigned to a Service, for instance the `LockMechanism` Service contains a `CurrentDoorState` Characteristic describing whether the door is currently locked.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 
-All known built-in Service and Characteristic types that HomeKit supports are exposed as a separate subclass in [HomeKitTypes](lib/gen/HomeKitTypes.js).
-
-See each of the corresponding class files for more explanation and notes.
-
-Notes
-=====
-
-Special thanks to [Alex Skalozub](https://twitter.com/pieceofsummer), who reverse engineered the server side HAP. ~~You can find his research at [here](https://gist.github.com/pieceofsummer/13272bf76ac1d6b58a30).~~ (Sadly, on Nov 4, Apple sent the [DMCA](https://github.com/github/dmca/blob/master/2014/2014-11-04-Apple.md) request to Github to remove the research.)
-
-[There](http://instagram.com/p/t4cPlcDksQ/) is a video demo running this project on Intel Edison.
-
-If you are interested in HAP over BTLE, you might want to check [this](https://gist.github.com/KhaosT/6ff09ba71d306d4c1079).
-
-Projects based on HAP-NodeJS
-============================
-
-* [Homebridge](https://github.com/nfarina/homebridge) - HomeKit support for the impatient - Pluggable HomeKit Bridge. Plugins available for  e.g. Pilight, Telldus TDtool, Savant, Netatmo, Open Pixel Control, HomeWizard, Fritz!Box, LG WebOS TV, Home Assistant, HomeMatic and many many more.
-* [OpenHAB-HomeKit-Bridge](https://github.com/htreu/OpenHAB-HomeKit-Bridge) - OpenHAB HomeKit Bridge bridges openHAB items to Apple´s HomeKit Accessory Protocol. 
-* [homekit2mqtt](https://github.com/hobbyquaker/homekit2mqtt) - HomeKit to MQTT bridge.
-* [pimatic-hap](https://github.com/michbeck100/pimatic-hap) - Pimatic homekit bridge.
-* [node-red-contrib-homekit](https://github.com/mschm/node-red-contrib-homekit) - Node-RED nodes to simulate Apple HomeKit devices.
-* [ioBroker.homekit](https://github.com/ioBroker/ioBroker.homekit2) - connect ioBroker to HomeKit.
-
-
+---
