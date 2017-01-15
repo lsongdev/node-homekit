@@ -1,4 +1,4 @@
-## homekit ![homekit](https://img.shields.io/npm/v/homekit.svg)
+## HomeKit ![homekit](https://img.shields.io/npm/v/homekit.svg)
 
 > A HomeKit Accessory implementation in Node.js
 
@@ -13,7 +13,7 @@ $ npm i homekit
 ```js
 const HomeKit = require('homekit');
 
-const uuid  = HomeKit.uuid.generate("homekit:yeelight");
+const uuid = HomeKit.uuid.generate("homekit:yeelight");
 const acce = new HomeKit.Accessory('Simple Light', uuid);
 
 acce.on('identify', function(paired, callback) {
